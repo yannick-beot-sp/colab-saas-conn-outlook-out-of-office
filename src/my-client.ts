@@ -49,7 +49,7 @@ export class MyClient {
 
         this.filter = config?.filter ?? ""
         this.pageSize = Math.min(config?.pageSize ?? 250, 999) // You can set the page size up to 999
-        console.log("pageSize="+this.pageSize);
+        console.log("pageSize=" + this.pageSize);
 
 
 
@@ -136,9 +136,14 @@ export class MyClient {
         // cd. https://learn.microsoft.com/en-us/graph/sdks/paging?tabs=typescript#stopping-and-resuming-the-iteration
         while (!pageIterator.isComplete()) {
             console.log('Getting mailbox settings...');
+            results = await Promise.all(
+                results.map(async (user: Map<string, string>) => {
+                    const mailboxSettings = await this.getMailboxSettings(user.get('id') as string)
+                    mappingMailboxSettings(user, mailboxSettings)
+                    return user
+                })
+            )
             for (let user of results) {
-                const mailboxSettings = await this.getMailboxSettings(user.get('id') as string)
-                mappingMailboxSettings(user, mailboxSettings)
                 yield user;
             }
             console.log('New Iteration...');
@@ -148,9 +153,14 @@ export class MyClient {
             await pageIterator.resume();
         }
         console.log('Getting mailbox settings from last batch...');
+        results = await Promise.all(
+            results.map(async (user: Map<string, string>) => {
+                const mailboxSettings = await this.getMailboxSettings(user.get('id') as string)
+                mappingMailboxSettings(user, mailboxSettings)
+                return user
+            })
+        )
         for (let user of results) {
-            const mailboxSettings = await this.getMailboxSettings(user.get('id') as string)
-            mappingMailboxSettings(user, mailboxSettings)
             yield user;
         }
     }
