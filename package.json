@@ -16,7 +16,7 @@
     "dependencies": {
         "@azure/identity": "^4.11.1",
         "@microsoft/microsoft-graph-client": "^3.0.5",
-        "@sailpoint/connector-sdk": "1.1.2",
+        "@sailpoint/connector-sdk": "^1.1.31",
         "isomorphic-fetch": "^3.0.0"
     },
     "devDependencies": {
